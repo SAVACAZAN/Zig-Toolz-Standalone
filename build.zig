@@ -7,7 +7,7 @@ pub fn build(b: *std.Build) void {
     // Automation scripts build step
     const automation_step = b.step("automation", "Build all automation scripts");
 
-    // Define all automation scripts
+    // Define all automation scripts (48 total)
     const automation_scripts = [_][]const u8{
         // Publishing & Registries (7)
         "registry-setup",
@@ -43,6 +43,30 @@ pub fn build(b: *std.Build) void {
         "changelog-gen",
         "code-stats",
         "health-report",
+        // Kubernetes & Orchestration (6)
+        "k8s-deploy",
+        "k8s-rollback",
+        "k8s-scale",
+        "helm-upgrade",
+        "pod-logs",
+        "k8s-health",
+        // Multi-Region Deployment (4)
+        "region-failover",
+        "geo-health-check",
+        "replica-sync",
+        "traffic-split",
+        // Advanced Monitoring (5)
+        "alert-rules-push",
+        "dashboard-deploy",
+        "slo-report",
+        "trace-analyze",
+        "uptime-monitor",
+        // Infrastructure as Code (5)
+        "terraform-plan",
+        "infra-drift",
+        "secret-rotate",
+        "env-validate",
+        "config-diff",
     };
 
     inline for (automation_scripts) |script_name| {
