@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zig Tools Registry - 757+ Tools Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0066cc;
+            --success: #00aa00;
+            --warning: #ff9900;
+            --danger: #cc0000;
+            --light: #f5f5f5;
+            --dark: #333;
+            --border: #ddd;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            padding: 20px;
+            background: #e3f2fd;
+            border-left: 4px solid var(--primary);
+            margin: 20px 30px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .info-box h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .info-box code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #d32f2f;
+        }
+
+        .controls {
+            padding: 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: var(--dark);
+        }
+
+        input[type="text"],
+        select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+
+        .search-box {
+            grid-column: 1 / -1;
+        }
+
+        input[type="text"].search-box {
+            padding: 15px;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-filter:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-reset {
+            background: var(--border);
+            color: var(--dark);
+        }
+
+        .btn-reset:hover {
+            background: #bbb;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: var(--light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: #e6f0ff;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .rating {
+            color: #ff9900;
+            font-weight: bold;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-stable {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-beta {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .result-info {
+            padding: 15px 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        .no-results {
+            padding: 60px 30px;
+            text-align: center;
+            color: #999;
+        }
+
+        .footer {
+            padding: 20px 30px;
+            background: var(--light);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.8em;
+            }
+
+            td, th {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧰 Zig Tools Registry</h1>
+            <p>757+ Tools, Libraries & Utilities for Zig Development</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-total">757</span>
+                    <span class="stat-label">Total Tools</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-categories">21</span>
+                    <span class="stat-label">Categories</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-zig">~240</span>
+                    <span class="stat-label">Zig-native</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📖 How to Load Full Data</h3>
+            <p>
+                <strong>Option 1 (Recommended):</strong> Use a local web server<br>
+                <code>cd Toolz/Zig\ uToolz && python3 -m http.server 8000</code><br>
+                Then open: <code>http://localhost:8000/tools-registry.html</code>
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Option 2:</strong> Use npm server<br>
+                <code>npx http-server Toolz/Zig\ uToolz</code>
+            </p>
+            <p style="margin-top: 10px;">
+                The data file <code>tools-registry-full.json</code> (757 tools) will load automatically when served via HTTP.
+            </p>
+        </div>
+
+        <div class="controls">
+            <input
+                type="text"
+                class="search-box"
+                id="searchInput"
+                placeholder="🔍 Search tools... (e.g., 'compiler', 'trading', 'web')"
+            >
+
+            <div class="control-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="ratingFilter">Rating</label>
+                <select id="ratingFilter">
+                    <option value="">All Ratings</option>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐+</option>
+                    <option value="3">⭐⭐⭐+</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-filter" onclick="applyFilters()">🔍 Filter</button>
+                <button class="btn-reset" onclick="resetFilters()">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="result-info">
+            Showing <span id="resultCount">0</span> tools from <span id="totalCount">757</span> total
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('rank')">#</th>
+                        <th onclick="sortTable('name')">Tool Name</th>
+                        <th onclick="sortTable('category')">Category</th>
+                        <th onclick="sortTable('rating')">Rating</th>
+                        <th onclick="sortTable('status')">Status</th>
+                        <th onclick="sortTable('language')">Language</th>
+                    </tr>
+                </thead>
+                <tbody id="toolsBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                            <strong>Loading tools from JSON...</strong><br>
+                            <small style="color: #bbb;">If data doesn't load, see instructions above for running a local server.</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>🔧 Zig Tools Registry • <a href="https://github.com/ziglang" style="color: inherit;">Zig Official</a> | <a href="tools-registry-full.json" style="color: inherit;">View Raw JSON</a></p>
+        </div>
+    </div>
+
+    <script>
+        let allTools = [];
+        let filteredTools = [];
+        let currentSort = { column: 'rank', direction: 'asc' };
+        let uniqueCategories = new Set();
+        let dataLoaded = false;
+
+        // Try to load JSON from multiple possible locations
+        async function loadTools() {
+            const possiblePaths = [
+                'tools-registry-full.json',
+                './tools-registry-full.json',
+                '../tools-registry-full.json',
+            ];
+
+            for (const path of possiblePaths) {
+                try {
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        const data = await response.json();
+                        processData(data);
+                        return;
+                    }
+                } catch (error) {
+                    console.log(`Failed to load from ${path}`);
+                }
+            }
+
+            console.warn('Could not load JSON file. Please serve via HTTP server.');
+        }
+
+        function processData(data) {
+            allTools = data.tools || [];
+            filteredTools = allTools;
+
+            if (!allTools || allTools.length === 0) {
+                showError('No tools found in data');
+                return;
+            }
+
+            // Extract categories
+            allTools.forEach(tool => {
+                if (tool.category) {
+                    uniqueCategories.add(tool.category);
+                }
+            });
+
+            populateFilters();
+            renderTable();
+            updateStats();
+            dataLoaded = true;
+        }
+
+        function populateFilters() {
+            const categorySelect = document.getElementById('categoryFilter');
+            Array.from(uniqueCategories).sort().forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('toolsBody');
+
+            if (filteredTools.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                            No tools found matching your filters
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('resultCount').textContent = '0';
+                return;
+            }
+
+            document.getElementById('resultCount').textContent = filteredTools.length;
+
+            tbody.innerHTML = filteredTools.map(tool => `
+                <tr>
+                    <td>${tool.rank || '—'}</td>
+                    <td><span class="tool-name">${tool.name || '—'}</span></td>
+                    <td>${tool.category || '—'}</td>
+                    <td><span class="rating">${tool.rating ? '⭐'.repeat(tool.rating) : '—'}</span></td>
+                    <td><span class="badge badge-${(tool.status || 'stable').toLowerCase()}">${tool.status || 'Stable'}</span></td>
+                    <td>${Array.isArray(tool.language) ? tool.language.join(', ') : tool.language || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const rating = parseInt(document.getElementById('ratingFilter').value);
+
+            filteredTools = allTools.filter(tool => {
+                const matchSearch = !search ||
+                    (tool.name && tool.name.toLowerCase().includes(search)) ||
+                    (tool.category && tool.category.toLowerCase().includes(search)) ||
+                    (tool.purpose && tool.purpose.toLowerCase().includes(search));
+
+                const matchCategory = !category || tool.category === category;
+                const matchRating = !rating || (tool.rating >= rating);
+
+                return matchSearch && matchCategory && matchRating;
+            });
+
+            sortTools();
+            renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('ratingFilter').value = '';
+            filteredTools = allTools;
+            sortTools();
+            renderTable();
+        }
+
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+            sortTools();
+            renderTable();
+        }
+
+        function sortTools() {
+            filteredTools.sort((a, b) => {
+                let aVal = a[currentSort.column];
+                let bVal = b[currentSort.column];
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                return currentSort.direction === 'asc'
+                    ? (aVal > bVal ? 1 : -1)
+                    : (aVal < bVal ? 1 : -1);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allTools.length;
+            document.getElementById('stat-total').textContent = allTools.length;
+        }
+
+        function showError(message) {
+            document.getElementById('toolsBody').innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #d32f2f;">
+                        <strong>⚠️ Error:</strong> ${message}
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Search on input
+        document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadTools);
+    </script>
+</body>
+</html>

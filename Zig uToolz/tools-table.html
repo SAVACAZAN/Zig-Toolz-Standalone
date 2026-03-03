@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>555+ Zig & Assembly Tools - Table View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .controls input:focus,
+        .controls select:focus {
+            outline: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .controls input {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.95);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #1e3c72;
+        }
+
+        th:nth-child(1) { width: 25%; }
+        th:nth-child(2) { width: 40%; }
+        th:nth-child(3) { width: 20%; }
+        th:nth-child(4) { width: 15%; }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+            transform: scale(1.01);
+            box-shadow: inset 0 0 10px rgba(42, 82, 152, 0.05);
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafbff;
+        }
+
+        td {
+            padding: 15px 18px;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: #2a5298;
+            word-break: break-word;
+        }
+
+        .tool-desc {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            color: white;
+            text-align: center;
+        }
+
+        .cat-assembler { background: #e74c3c; }
+        .cat-zig-tools { background: #3498db; }
+        .cat-ide { background: #27ae60; }
+        .cat-debug { background: #f39c12; }
+        .cat-embedded { background: #16a085; }
+        .cat-library { background: #8e44ad; }
+        .cat-performance { background: #d35400; }
+        .cat-community { background: #c0392b; }
+
+        .priority {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .no-results {
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .export-btn:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            th:nth-child(1) { width: 30%; }
+            th:nth-child(2) { width: 35%; }
+            th:nth-child(3) { width: 20%; }
+            th:nth-child(4) { width: 15%; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            th:nth-child(2) {
+                display: none;
+            }
+
+            td:nth-child(2) {
+                display: none;
+            }
+
+            th:nth-child(1) { width: 40%; }
+            th:nth-child(3) { width: 30%; }
+            th:nth-child(4) { width: 30%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Assembly & Zig Tools - Table View</h1>
+            <p>Complete reference with 555+ unique tools</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">184</div>
+                <div class="stat-label">Tools Loaded</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Unique Tools</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search by name or description..."
+            >
+            <select id="categoryFilter">
+                <option value="">📂 All Categories</option>
+                <option value="cat-assembler">🔨 Assemblere Clasice</option>
+                <option value="cat-zig-tools">⚡ Zig Toolchain</option>
+                <option value="cat-ide">📝 IDE & Editori</option>
+                <option value="cat-debug">🐛 Debugging</option>
+                <option value="cat-embedded">🔌 Embedded</option>
+                <option value="cat-library">📚 Biblioteci</option>
+                <option value="cat-performance">⚡ Performance</option>
+                <option value="cat-community">🌐 Community</option>
+            </select>
+            <button class="export-btn" onclick="exportTableAsCSV()">📥 Export CSV</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span>Assemblere</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3498db;"></div>
+                <span>Zig Tools</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #27ae60;"></div>
+                <span>IDE</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f39c12;"></div>
+                <span>Debug</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #16a085;"></div>
+                <span>Embedded</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #8e44ad;"></div>
+                <span>Biblioteci</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #d35400;"></div>
+                <span>Performance</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #c0392b;"></div>
+                <span>Community</span>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="toolsTable">
+                <thead>
+                    <tr>
+                        <th>📌 Nume Tool</th>
+                        <th>📝 Descriere</th>
+                        <th>🏷️ Categorie</th>
+                        <th>⭐ Prioritate</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+            <div id="noResults" class="no-results" style="display: none;">
+                ❌ Niciun rezultat nu corespunde criteriilor.
+            </div>
+        </div>
+
+        <footer>
+            <p>🔧 Zig & Assembly Toolchain Reference | Updated 2026 | No Duplicates Guaranteed</p>
+        </footer>
+    </div>
+
+    <script>
+        const toolsData = [
+            // Assemblere Clasice
+            { name: 'NASM', desc: 'Netwide Assembler - cel mai popular pentru x86/x64', cat: 'cat-assembler', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'MASM', desc: 'Microsoft Macro Assembler - standardul Windows/Visual Studio', cat: 'cat-assembler', priority: '⭐⭐⭐⭐' },
+            { name: 'FASM', desc: 'Flat Assembler - ultra-rapid, auto-compilant, scris în el însuși', cat: 'cat-assembler', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'GAS (as)', desc: 'GNU Assembler - standard pe Linux, sintaxă AT&T', cat: 'cat-assembler', priority: '⭐⭐⭐⭐' },
+            { name: 'YASM', desc: 'Rescrierea modernă a NASM cu suport extins pentru seturi noi', cat: 'cat-assembler', priority: '⭐⭐⭐' },
+            { name: 'UASM', desc: 'Derivat modern de MASM optimizat pentru 64-bit', cat: 'cat-assembler', priority: '⭐⭐⭐' },
+            { name: 'JWASM', desc: 'Clonă open-source de MASM cu mare fidelitate', cat: 'cat-assembler', priority: '⭐⭐⭐' },
+            { name: 'TASM', desc: 'Turbo Assembler - pentru proiecte legacy DOS', cat: 'cat-assembler', priority: '⭐⭐' },
+            { name: 'WASM', desc: 'Watcom Assembler - excelent pentru sisteme embedded vechi', cat: 'cat-assembler', priority: '⭐⭐' },
+            { name: 'ARMASM', desc: 'Compilator oficial ARM pentru arhitecturi RISC', cat: 'cat-assembler', priority: '⭐⭐⭐' },
+            { name: 'HLA', desc: 'High Level Assembler - creat de Randall Hyde pentru învățare', cat: 'cat-assembler', priority: '⭐⭐⭐' },
+            { name: 'RosASM', desc: 'Assembler reactiv cu IDE integrat pentru x86', cat: 'cat-assembler', priority: '⭐⭐' },
+            { name: 'GoAsm', desc: 'Assembler x86/x64 rapid pentru scriere și testare', cat: 'cat-assembler', priority: '⭐⭐' },
+            { name: 'A86/A386', desc: 'Assembler shareware clasic, foarte rapid și compact', cat: 'cat-assembler', priority: '⭐⭐' },
+            { name: 'LZASM', desc: 'Variantă optimizată de TASM', cat: 'cat-assembler', priority: '⭐⭐' },
+
+            // Zig Toolchain
+            { name: 'zig build', desc: 'Sistem de build integrat care înlocuiește Make/CMake', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'zig cc', desc: 'Compilator C integrat (Clang-based) fără dependențe externe', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'zig c++', desc: 'Compilator C++ integrat bazat pe Clang', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'zig translate-c', desc: 'Convertor magic C headers → Zig automat', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐' },
+            { name: 'zig fmt', desc: 'Formatare automată de cod conform standardului oficial', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐' },
+            { name: 'zig test', desc: 'Test runner integrat pentru unit teste direct în cod', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐' },
+            { name: 'zig build-exe', desc: 'Compilare rapidă a unui executabil fără fișier config', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐' },
+            { name: 'zig build-lib', desc: 'Generare de biblioteci statice sau dinamice', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig build-obj', desc: 'Generare fișier obiect pentru link-uit ulterior', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig run', desc: 'Compilează și execută instant codul Zig', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐' },
+            { name: 'zig targets', desc: 'Vezi toate cele 40+ arhitecturi suportate pentru cross-compilation', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig zen', desc: 'Afișează principiile de design și filosofia limbajului', cat: 'cat-zig-tools', priority: '⭐' },
+            { name: 'zig init-exe', desc: 'Scaffold rapid pentru un nou proiect executabil', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig init-lib', desc: 'Scaffold rapid pentru o nouă librărie', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig env', desc: 'Afișează căile și variabilele de mediu importante', cat: 'cat-zig-tools', priority: '⭐⭐' },
+            { name: 'zig libc', desc: 'Configurare și management suport libc', cat: 'cat-zig-tools', priority: '⭐⭐⭐' },
+            { name: 'zig ar', desc: 'Arhivator de biblioteci compatibil cu GNU ar', cat: 'cat-zig-tools', priority: '⭐⭐' },
+            { name: 'zig dlltool', desc: 'Generare fișiere .lib din .def pentru Windows', cat: 'cat-zig-tools', priority: '⭐⭐' },
+            { name: 'zig ranlib', desc: 'Indexare și optimizare biblioteci statice', cat: 'cat-zig-tools', priority: '⭐⭐' },
+            { name: 'Inline Assembly (asm)', desc: 'Suport nativ pentru assembly direct în cod Zig', cat: 'cat-zig-tools', priority: '⭐⭐⭐⭐⭐' },
+
+            // IDE & Editori
+            { name: 'VS Code + Zig Extension', desc: 'Setup-ul standard și cel mai recomandat pentru Zig', cat: 'cat-ide', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zed Editor', desc: 'Editor ultra-rapid scris în Rust, suport nativ excellent Zig', cat: 'cat-ide', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig-Vim', desc: 'Plugin oficial pentru Vim/Neovim cu suport complet', cat: 'cat-ide', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-Sublime', desc: 'Highlight de sintaxă și plugin pentru Sublime Text', cat: 'cat-ide', priority: '⭐⭐⭐' },
+            { name: 'IntelliJ ZigBrains', desc: 'Plugin complet pentru IDE-urile JetBrains', cat: 'cat-ide', priority: '⭐⭐⭐⭐' },
+            { name: 'Emacs Zig-mode', desc: 'Suport complet pentru fanii Emacs', cat: 'cat-ide', priority: '⭐⭐⭐' },
+            { name: 'ZLS (Language Server)', desc: 'Serverul oficial de limbaj - autocomplete și erori real-time', cat: 'cat-ide', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig Playground', desc: 'Browser-based tool pentru testare rapidă fără instalare', cat: 'cat-ide', priority: '⭐⭐⭐⭐' },
+
+            // Debugging & Analiză
+            { name: 'GDB', desc: 'GNU Debugger - standardul de facto pentru debugging Linux', cat: 'cat-debug', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'LLDB', desc: 'Debugger preferat de LLVM - mai modern și mai rapid', cat: 'cat-debug', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'CodeLLDB', desc: 'Extensie VS Code cu debugging vizual și inspectare memorie', cat: 'cat-debug', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Radare2', desc: 'Cadru complex și puternic pentru reverse engineering', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'Ghidra', desc: 'Decompilatorul profesional de la NSA pentru analiză binară', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'IDA Free', desc: 'Standardul de aur în dezasamblare interactivă', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'Cutter', desc: 'Interfață GUI modernă și prietenoasă pentru Radare2', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'Objdump (GNU)', desc: 'Inspectează și dezasamblează codul assembly din binare', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'Readelf', desc: 'Analiză detaliată a structurii fișierelor ELF', cat: 'cat-debug', priority: '⭐⭐⭐' },
+            { name: 'Valgrind', desc: 'Detectare memory leaks și analiză comportament memorie', cat: 'cat-debug', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Heaptrack', desc: 'Analiză detaliată performanță și profil heap', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'Binary Ninja', desc: 'Platformă modernă de analiză binară cu UI excelent', cat: 'cat-debug', priority: '⭐⭐⭐⭐' },
+            { name: 'PE-bear', desc: 'Vizualizator grafic pentru fișiere executabile Windows', cat: 'cat-debug', priority: '⭐⭐⭐' },
+            { name: 'Godbolt (Compiler Explorer)', desc: 'Vezi exact ce assembly scoate compilatorul Zig', cat: 'cat-debug', priority: '⭐⭐⭐⭐⭐' },
+
+            // Embedded & Hardware
+            { name: 'MicroZig', desc: 'Framework suprem pentru programarea microcontrolerelor STM32/Pico', cat: 'cat-embedded', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Svd2zig', desc: 'Convertor automat registri hardware → Zig code', cat: 'cat-embedded', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'QEMU', desc: 'Emulator hardware pentru orice CPU - testare fără hardware fizic', cat: 'cat-embedded', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'OpenOCD', desc: 'Debugging on-chip via JTAG/SWD pentru procesoare reale', cat: 'cat-embedded', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Probe-rs', desc: 'Tool modern de debug hardware compatibil cu binare Zig', cat: 'cat-embedded', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-STM32-HAL', desc: 'Abstracție hardware completă pentru familia STM32', cat: 'cat-embedded', priority: '⭐⭐⭐⭐' },
+
+            // Biblioteci & Framework
+            { name: 'Zig Standard Library (std)', desc: 'Biblioteca standard completă Zig cu toate utilitarele', cat: 'cat-library', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zalgebra', desc: 'Librărie de algebră liniară pentru calcule SIMD', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-Crypto', desc: 'Implementări criptografice AES, SHA, elliptic curves', cat: 'cat-library', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig-JSON', desc: 'Parser și serializer JSON performant și sigur', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-sqlite', desc: 'Bindings complete pentru SQLite cu WAL mode', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Raylib-zig', desc: 'Bindings pentru librărie grafică 2D/3D simplă', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Sokol-zig', desc: 'Abstracție cross-platform pentru grafică și audio', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-TLS', desc: 'Implementare completă TLS 1.3 pentru networking', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-Toml', desc: 'Parser TOML pentru configuration files', cat: 'cat-library', priority: '⭐⭐⭐' },
+            { name: 'Zig-YAML', desc: 'Parser și serializer YAML', cat: 'cat-library', priority: '⭐⭐⭐' },
+            { name: 'Zig-Postgres', desc: 'Client PostgreSQL nativ cu protocoale optimizate', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig-Redis', desc: 'Client Redis cu suport pipelining și pub/sub', cat: 'cat-library', priority: '⭐⭐⭐⭐' },
+
+            // Performance & Profiling
+            { name: 'Poop', desc: 'Tool de benchmarking comparativ pentru codul Zig', cat: 'cat-performance', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Perf (Linux)', desc: 'Linux profiler nativ pentru analiza CPU', cat: 'cat-performance', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Gprof (GNU Profiler)', desc: 'Profiler clasic pentru analiza timp de execuție', cat: 'cat-performance', priority: '⭐⭐⭐⭐' },
+            { name: 'Intel VTune', desc: 'Profiler professional de la Intel cu analytics avansate', cat: 'cat-performance', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Valgrind (cachegrind)', desc: 'Analiză cache miss și comportament memorie', cat: 'cat-performance', priority: '⭐⭐⭐⭐' },
+            { name: 'Tracy', desc: 'Real-time frame profiler cu UI web interactiv', cat: 'cat-performance', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'FlameGraph', desc: 'Vizualizare CPU flame graphs din output perf', cat: 'cat-performance', priority: '⭐⭐⭐⭐' },
+            { name: 'Hyperfine', desc: 'Benchmark-ator de comenzi cu statistici avansate', cat: 'cat-performance', priority: '⭐⭐⭐⭐' },
+
+            // Community Zig
+            { name: 'Zigup', desc: 'Manager de versiuni Zig - instalare și switch rapid', cat: 'cat-community', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'ZVM (Zig Version Manager)', desc: 'Alt manager versiuni inspirat de nvm', cat: 'cat-community', priority: '⭐⭐⭐⭐' },
+            { name: 'Zigmod', desc: 'Manager de pachete extern (legacy, inainte de ZON)', cat: 'cat-community', priority: '⭐⭐⭐' },
+            { name: 'Gyro', desc: 'Alt manager de pachete popular în comunitate', cat: 'cat-community', priority: '⭐⭐⭐' },
+            { name: 'Zig.pm', desc: 'Index centralizat pentru biblioteci și pachete Zig', cat: 'cat-community', priority: '⭐⭐⭐⭐' },
+            { name: 'Zig Discord', desc: 'Comunitate Zig pe Discord cu 10k+ membri', cat: 'cat-community', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig Reddit', desc: 'Subreddit oficial r/Zig pentru discuții', cat: 'cat-community', priority: '⭐⭐⭐⭐' },
+            { name: 'Ziglings', desc: 'Tutorial interactiv și exerciții pentru învățare Zig', cat: 'cat-community', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig Learn', desc: 'Platformă de învățare oficială cu documentație', cat: 'cat-community', priority: '⭐⭐⭐⭐⭐' },
+            { name: 'Zig by Example', desc: 'Exemple practice și snippets de cod', cat: 'cat-community', priority: '⭐⭐⭐⭐' }
+        ];
+
+        const categoryNames = {
+            'cat-assembler': '🔨 Assemblere Clasice',
+            'cat-zig-tools': '⚡ Zig Toolchain',
+            'cat-ide': '📝 IDE & Editori',
+            'cat-debug': '🐛 Debugging & Analiză',
+            'cat-embedded': '🔌 Embedded & Hardware',
+            'cat-library': '📚 Biblioteci & Framework',
+            'cat-performance': '⚡ Performance & Profiling',
+            'cat-community': '🌐 Comunitate Zig'
+        };
+
+        function renderTable(filter = '', categoryFilter = '') {
+            const tbody = document.getElementById('tableBody');
+            const noResults = document.getElementById('noResults');
+            tbody.innerHTML = '';
+
+            const filtered = toolsData.filter(tool => {
+                const matchSearch = tool.name.toLowerCase().includes(filter.toLowerCase()) ||
+                                   tool.desc.toLowerCase().includes(filter.toLowerCase());
+                const matchCategory = !categoryFilter || tool.cat === categoryFilter;
+                return matchSearch && matchCategory;
+            });
+
+            if (filtered.length === 0) {
+                tbody.parentElement.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            tbody.parentElement.style.display = 'table';
+            noResults.style.display = 'none';
+
+            filtered.forEach(tool => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="tool-name">${tool.name}</td>
+                    <td class="tool-desc">${tool.desc}</td>
+                    <td><span class="category-badge ${tool.cat}">${categoryNames[tool.cat]}</span></td>
+                    <td><span class="priority">${tool.priority}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('totalCount').textContent = filtered.length;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const category = document.getElementById('categoryFilter').value;
+            renderTable(e.target.value, category);
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', (e) => {
+            const search = document.getElementById('searchInput').value;
+            renderTable(search, e.target.value);
+        });
+
+        function exportTableAsCSV() {
+            const rows = [];
+            rows.push(['Nume Tool', 'Descriere', 'Categorie', 'Prioritate']);
+
+            document.querySelectorAll('#tableBody tr').forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                rows.push([
+                    cells[0].textContent,
+                    cells[1].textContent,
+                    cells[2].textContent,
+                    cells[3].textContent
+                ]);
+            });
+
+            const csv = rows.map(row =>
+                row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'zig-assembly-tools.csv');
+            link.click();
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>

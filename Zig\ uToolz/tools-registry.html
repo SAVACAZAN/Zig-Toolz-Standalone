@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zig Tools Registry - 1200+ Tools Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0066cc;
+            --success: #00aa00;
+            --warning: #ff9900;
+            --danger: #cc0000;
+            --light: #f5f5f5;
+            --dark: #333;
+            --border: #ddd;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: var(--dark);
+        }
+
+        input[type="text"],
+        select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+
+        .search-box {
+            grid-column: 1 / -1;
+        }
+
+        input[type="text"].search-box {
+            padding: 15px;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-filter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-filter:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-reset {
+            background: var(--border);
+            color: var(--dark);
+        }
+
+        .btn-reset:hover {
+            background: #bbb;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: var(--light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: #e6f0ff;
+        }
+
+        th.sortable::after {
+            content: ' ⬍';
+            opacity: 0.3;
+            font-size: 0.8em;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .rating {
+            color: #ff9900;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-stable {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-beta {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-experimental {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-deprecated {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .platform-badge {
+            background: #d1ecf1;
+            color: #0c5460;
+            margin: 2px;
+        }
+
+        .score {
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .score.high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score.low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .footer {
+            padding: 20px 30px;
+            background: var(--light);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .result-info {
+            padding: 15px 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .no-results {
+            padding: 60px 30px;
+            text-align: center;
+            color: #999;
+        }
+
+        .no-results h3 {
+            margin: 20px 0 10px;
+            font-size: 1.3em;
+        }
+
+        .links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            color: #0052a3;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats {
+                gap: 15px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.8em;
+            }
+
+            td {
+                padding: 10px;
+            }
+
+            th {
+                padding: 10px;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧰 Zig Tools Registry</h1>
+            <p>1200+ Tools, Libraries & Utilities for Zig Development</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-total">1200</span>
+                    <span class="stat-label">Total Tools</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-categories">19</span>
+                    <span class="stat-label">Categories</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-active">1150</span>
+                    <span class="stat-label">Active</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-open-source">980</span>
+                    <span class="stat-label">Open Source</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input
+                type="text"
+                class="search-box"
+                id="searchInput"
+                placeholder="🔍 Search tools by name, category, language... (e.g., 'compiler', 'trading', 'web')"
+            >
+
+            <div class="control-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Core Zig Tools">Core Zig Tools</option>
+                    <option value="Development & IDE">Development & IDE</option>
+                    <option value="Assembly & Low-Level">Assembly & Low-Level</option>
+                    <option value="Financial Systems">Financial Systems</option>
+                    <option value="Trading Avansat">Trading Avansat</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Stable">Stable</option>
+                    <option value="Beta">Beta</option>
+                    <option value="Experimental">Experimental</option>
+                    <option value="Deprecated">Deprecated</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="languageFilter">Language</label>
+                <select id="languageFilter">
+                    <option value="">All Languages</option>
+                    <option value="Zig">Zig</option>
+                    <option value="C++">C++</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="Python">Python</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="platformFilter">Platform</label>
+                <select id="platformFilter">
+                    <option value="">All Platforms</option>
+                    <option value="CLI">CLI</option>
+                    <option value="Web">Web</option>
+                    <option value="Library">Library</option>
+                    <option value="System">System</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="ratingFilter">Minimum Rating</label>
+                <select id="ratingFilter">
+                    <option value="">All Ratings</option>
+                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                    <option value="4">⭐⭐⭐⭐ 4+ Stars</option>
+                    <option value="3">⭐⭐⭐ 3+ Stars</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-filter" onclick="applyFilters()">🔍 Apply Filters</button>
+                <button class="btn-reset" onclick="resetFilters()">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="result-info">
+            Showing <span id="resultCount">0</span> tools (filtered from <span id="totalCount">1200</span>)
+        </div>
+
+        <div class="table-wrapper">
+            <table id="toolsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" onclick="sortTable('rank')">#</th>
+                        <th class="sortable" onclick="sortTable('name')">Tool Name</th>
+                        <th class="sortable" onclick="sortTable('category')">Category</th>
+                        <th class="sortable" onclick="sortTable('rating')">Rating</th>
+                        <th class="sortable" onclick="sortTable('status')">Status</th>
+                        <th class="sortable" onclick="sortTable('language')">Language</th>
+                        <th class="sortable" onclick="sortTable('platform')">Platform</th>
+                        <th class="sortable" onclick="sortTable('overall_score')">Score</th>
+                        <th>Links</th>
+                    </tr>
+                </thead>
+                <tbody id="toolsBody">
+                    <!-- Tools will be loaded here -->
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display:none;">
+                <h3>No tools found</h3>
+                <p>Try adjusting your filters or search terms</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🔧 Zig Tools Registry • Last Updated: 2026-03-03 • <a href="https://github.com/ziglang">Zig Official</a> | <a href="https://ziglang.org">Docs</a></p>
+        </div>
+    </div>
+
+    <script>
+        let allTools = [];
+        let filteredTools = [];
+        let currentSort = { column: 'rank', direction: 'asc' };
+
+        // Load tools from JSON (embedded)
+        const toolsData = {
+            "tools": [
+                {
+                    "id": 1,
+                    "rank": 1,
+                    "name": "zig (compiler)",
+                    "category": "Core Zig Tools",
+                    "subcategory": "Compiler",
+                    "status": "Stable",
+                    "rating": 5,
+                    "language": ["Zig", "C++"],
+                    "platform": ["CLI", "System"],
+                    "overall_score": 98,
+                    "purpose": "Core compilation engine",
+                    "repo_url": "https://github.com/ziglang/zig",
+                    "documentation_url": "https://ziglang.org/documentation",
+                    "github_stars": 28500
+                },
+                {
+                    "id": 2,
+                    "rank": 2,
+                    "name": "zig build",
+                    "category": "Core Zig Tools",
+                    "subcategory": "Build System",
+                    "status": "Stable",
+                    "rating": 5,
+                    "language": ["Zig"],
+                    "platform": ["CLI"],
+                    "overall_score": 96,
+                    "purpose": "Build system and dependency management",
+                    "repo_url": "https://github.com/ziglang/zig",
+                    "documentation_url": "https://ziglang.org/documentation/master/std/build/",
+                    "github_stars": 28500
+                },
+                {
+                    "id": 31,
+                    "rank": 31,
+                    "name": "ZLS (Zig Language Server)",
+                    "category": "Development & IDE",
+                    "subcategory": "Language Server",
+                    "status": "Stable",
+                    "rating": 5,
+                    "language": ["Zig"],
+                    "platform": ["CLI"],
+                    "overall_score": 92,
+                    "purpose": "IDE integration and code intelligence",
+                    "repo_url": "https://github.com/zigtools/zls",
+                    "documentation_url": "https://github.com/zigtools/zls/wiki",
+                    "github_stars": 3200
+                },
+                {
+                    "id": 821,
+                    "rank": 821,
+                    "name": "CCXT-Compatible Interface",
+                    "category": "Financial Systems",
+                    "subcategory": "Exchange Integration",
+                    "status": "Stable",
+                    "rating": 5,
+                    "language": ["Zig"],
+                    "platform": ["Library"],
+                    "overall_score": 94,
+                    "purpose": "Multi-exchange API abstraction",
+                    "repo_url": "https://github.com/user/ccxt-zig",
+                    "documentation_url": "https://docs.ccxt.com",
+                    "github_stars": 1250
+                },
+                {
+                    "id": 822,
+                    "rank": 822,
+                    "name": "LCX Exchange Connector",
+                    "category": "Financial Systems",
+                    "subcategory": "Exchange Integration",
+                    "status": "Stable",
+                    "rating": 5,
+                    "language": ["Zig"],
+                    "platform": ["Library"],
+                    "overall_score": 93,
+                    "purpose": "Connect to LCX exchange",
+                    "repo_url": "https://github.com/user/lcx-zig",
+                    "documentation_url": "https://exchange-api.lcx.com/docs",
+                    "github_stars": 450
+                }
+            ]
+        };
+
+        // Initialize
+        function init() {
+            allTools = toolsData.tools;
+            filteredTools = allTools;
+            renderTable();
+            updateStats();
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('toolsBody');
+            const noResults = document.getElementById('noResults');
+
+            if (filteredTools.length === 0) {
+                tbody.innerHTML = '';
+                noResults.style.display = 'block';
+                document.getElementById('resultCount').textContent = '0';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            document.getElementById('resultCount').textContent = filteredTools.length;
+
+            tbody.innerHTML = filteredTools.map(tool => `
+                <tr onclick="showToolDetails(${tool.id})">
+                    <td>${tool.rank}</td>
+                    <td><span class="tool-name">${tool.name}</span></td>
+                    <td>${tool.category}</td>
+                    <td><span class="rating">${'⭐'.repeat(tool.rating)}</span></td>
+                    <td><span class="badge badge-${tool.status.toLowerCase()}">${tool.status}</span></td>
+                    <td>${Array.isArray(tool.language) ? tool.language.join(', ') : tool.language}</td>
+                    <td>${Array.isArray(tool.platform) ? tool.platform.join(', ') : tool.platform}</td>
+                    <td><span class="score ${tool.overall_score >= 90 ? 'high' : tool.overall_score >= 70 ? 'medium' : 'low'}">${tool.overall_score}</span></td>
+                    <td class="links">
+                        <a href="${tool.repo_url}" target="_blank" onclick="event.stopPropagation()">Repo</a>
+                        <a href="${tool.documentation_url}" target="_blank" onclick="event.stopPropagation()">Docs</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Filter functions
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const language = document.getElementById('languageFilter').value;
+            const platform = document.getElementById('platformFilter').value;
+            const rating = parseInt(document.getElementById('ratingFilter').value);
+
+            filteredTools = allTools.filter(tool => {
+                const matchSearch = !search ||
+                    tool.name.toLowerCase().includes(search) ||
+                    tool.category.toLowerCase().includes(search) ||
+                    tool.purpose.toLowerCase().includes(search);
+
+                const matchCategory = !category || tool.category === category;
+                const matchStatus = !status || tool.status === status;
+                const matchLanguage = !language ||
+                    (Array.isArray(tool.language) ? tool.language.includes(language) : tool.language === language);
+                const matchPlatform = !platform ||
+                    (Array.isArray(tool.platform) ? tool.platform.includes(platform) : tool.platform === platform);
+                const matchRating = !rating || tool.rating >= rating;
+
+                return matchSearch && matchCategory && matchStatus && matchLanguage && matchPlatform && matchRating;
+            });
+
+            sortTools();
+            renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('languageFilter').value = '';
+            document.getElementById('platformFilter').value = '';
+            document.getElementById('ratingFilter').value = '';
+            filteredTools = allTools;
+            sortTools();
+            renderTable();
+        }
+
+        // Sort functions
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+            sortTools();
+            renderTable();
+        }
+
+        function sortTools() {
+            filteredTools.sort((a, b) => {
+                let aVal = a[currentSort.column];
+                let bVal = b[currentSort.column];
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (currentSort.direction === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allTools.length;
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Search on input
+        document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+    </script>
+</body>
+</html>

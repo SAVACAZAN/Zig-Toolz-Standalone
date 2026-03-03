@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Master List 2026: 77 Capitole Inginerie Software</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #f9f9f9; }
+        body { font-family: 'Inter', sans-serif; background: var/(--bg); padding: 40px; line-height: 1.5; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); border-bottom: 4px solid var(--accent); padding-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+        .chapter { border: 1px solid #ddd; padding: 15px; border-radius: 8px; transition: 0.3s; }
+        .chapter:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .chapter-num { font-weight: bold; color: var(--accent); font-size: 1.2em; }
+        h3 { margin: 10px 0; font-size: 1.1em; color: var(--primary); }
+        p { font-size: 0.85em; color: #666; }
+        .stats { text-align: center; font-style: italic; color: #888; margin-bottom: 30px; }
+        .btn-print { display: block; width: 200px; margin: 30px auto; padding: 12px; background: var(--primary); color: white; text-align: center; text-decoration: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Ultimate Systems Architecture: 77 Chapters</h1>
+    <p class="stats">Mapping the 150,000+ Crate Ecosystem (Rust, Zig, Asm) - Edition 2026</p>
+
+    <div class="grid" id="master-grid">
+        <!-- Generăm primele 10 capitole ca exemplu, lista continuă până la 77 -->
+        <div class="chapter"><span class="chapter-num">01</span><h3>Core Systems & Runtimes</h3><p>Tokio, Async-std, Mio, Embassy, Smol.</p></div>
+        <div class="chapter"><span class="chapter-num">02</span><h3>Memory Management</h3><p>Bumpalo, Jemallocator, Mi-malloc, Wee_alloc.</p></div>
+        <div class="chapter"><span class="chapter-num">03</span><h3>Compilers & IR</h3><p>Inkwell (LLVM), Cranelift, QBE, LALRPOP, Chumsky.</p></div>
+        <div class="chapter"><span class="chapter-num">04</span><h3>Kernel Development</h3><p>Redox-kernel, Bootloader, X86_64, Aarch64-cpu.</p></div>
+        <div class="chapter"><span class="chapter-num">05</span><h3>Virtualization & Hypervisors</h3><p>Firecracker, Cloud-hypervisor, Rust-vmm, Crosvm.</p></div>
+        <div class="chapter"><span class="chapter-num">06</span><h3>High-Frequency Trading</h3><p>FIX-rs, ITCH-parser, Binary-order-book, Simple-binary-encoding.</p></div>
+        <div class="chapter"><span class="chapter-num">07</span><h3>Quantitative Analysis</h3><p>Nalgebra, Statrs, Quant-lib-rs, Black-scholes-simd.</p></div>
+        <div class="chapter"><span class="chapter-num">08</span><h3>Blockchain Layer 1</h3><p>Substrate, Solana-sdk, Rust-bitcoin, Reth (Ethereum).</p></div>
+        <div class="chapter"><span class="chapter-num">09</span><h3>Smart Contracts (ZK & L2)</h3><p>Anchor-lang, Zk-crypto, Fuel-core, Alloy-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">10</span><h3>Cryptography (Post-Quantum)</h3><p>Kyber-rs, Dilithium-rs, Sphincs-plus, Ring, RustCrypto.</p></div>
+        <div class="chapter"><span class="chapter-num">11</span><h3>Network Protocols (L4-L7)</h3><p>Quinn (QUIC), Hyper (HTTP), Tonic (gRPC), Tungstenite (WS).</p></div>
+        <div class="chapter"><span class="chapter-num">12</span><h3>Data Engineering (Big Data)</h3><p>Polars, Apache Arrow, Datafusion, Ballista.</p></div>
+        <div class="chapter"><span class="chapter-num">13</span><h3>Database Engines (Internal)</h3><p>Sled, Rocksdb-rs, Persy, TigerBeetle (Zig-core).</p></div>
+        <div class="chapter"><span class="chapter-num">14</span><h3>Database Clients (ORM)</h3><p>Sqlx, Diesel, Sea-ORM, Mongodb-rs, Redis-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">15</span><h3>AI: Deep Learning</h3><p>Candle, Burn, Tch-rs (PyTorch), Tensorflow-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">16</span><h3>AI: Agentic Frameworks</h3><p>Rig, Jido, Langchain-rust, NullClaw (Zig-AI).</p></div>
+        <div class="chapter"><span class="chapter-num">17</span><h3>Bioinformatics: Genomics</h3><p>Gtars, Rust-Bio, Bam-rs, Nuc-2bit, Needletail.</p></div>
+        <div class="chapter"><span class="chapter-num">18</span><h3>Bioinformatics: Proteomics</h3><p>Symphonia-bio, Protein-folding-sim, HMMer-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">19</span><h3>Game Engines (ECS)</h3><p>Bevy, Mach (Zig), Amethyst, Legion, Specs.</p></div>
+        <div class="chapter"><span class="chapter-num">20</span><h3>Graphics API (Low-level)</h3><p>WGPU, Vulkano, Ash, Glow, Sokol (Zig-bindings).</p></div>
+        <div class="chapter"><span class="chapter-num">21</span><h3>Audio Synthesis & DSP</h3><p>CPAL, Rodio, Fundsp, Symphonia, Hound.</p></div>
+        <div class="chapter"><span class="chapter-num">22</span><h3>Video Encoding & AV1</h3><p>Rav1e, Ffmpeg-next, Openh264-rs, Dav1d.</p></div>
+        <div class="chapter"><span class="chapter-num">23</span><h3>Robotics & ROS</h3><p>Rosrust, OpenRR, Robotics-rs, Servo-control.</p></div>
+        <div class="chapter"><span class="chapter-num">24</span><h3>Aerospace & Safety Critical</h3><p>Arinc653-rs, Ccsds-packet, Flight-logic-verified.</p></div>
+        <div class="chapter"><span class="chapter-num">25</span><h3>GUI: Desktop & Mobile</h3><p>Tauri, Slint, Iced, Egui, Druid, Relm4.</p></div>
+        <div class="chapter"><span class="chapter-num">26</span><h3>WebAssembly Runtimes</h3><p>Wasmtime, Wasmer, Wasm-bindgen, Wasm-pack.</p></div>
+        <div class="chapter"><span class="chapter-num">27</span><h3>Cybersecurity: Red Teaming</h3><p>Black-hat-rust, Pwninit, Cobalt-rs, Metasploit-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">28</span><h3>Cybersecurity: Malware Analysis</h3><p>Goblin (Binary parser), Capstone-rs, Unicorn-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">29</span><h3>Serialization (The Serde Empire)</h3><p>Serde, Bincode, Postcard, MessagePack, CBOR.</p></div>
+        <div class="chapter"><span class="chapter-num">30</span><h3>SIMD & Intrinsic Optimization</h3><p>Packed_simd, Safe_arch, Z-intrinsics (Zig).</p></div>
+        <div class="chapter"><span class="chapter-num">31</span><h3>Embedded Hardware HALs</h3><p>STM32-hal, NRF-hal, ESP-hal, RP2040-hal.</p></div>
+        <div class="chapter"><span class="chapter-num">32</span><h3>Industrial Protocols</h3><p>Modbus-rs, EtherCAT, OPC-UA, CANopen.</p></div>
+        <div class="chapter"><span class="chapter-num">33</span><h3>GIS & Spatial Data</h3><p>Geo-rust, Proj, Gdal, Postgis-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">34</span><h3>Astronomy & Astrophysics</h3><p>Astro-rs, Fits-rs, Celestia-engine.</p></div>
+        <div class="chapter"><span class="chapter-num">35</span><h3>CLI Power Tools</h3><p>Clap, Ratatui, Inquire, Dialoguer, Indicatif.</p></div>
+        <div class="chapter"><span class="chapter-num">36</span><h3>Cloud Native & Serverless</h3><p>Aws-sdk, Lambda-runtime, Krustlet, Spin (Fermyon).</p></div>
+        <div class="chapter"><span class="chapter-num">37</span><h3>Distributed Consensus</h3><p>Raft-rs, Open-raft, Casbin-rs (Auth).</p></div>
+        <div class="chapter"><span class="chapter-num">38</span><h3>Formal Verification</h3><p>KLEE-rs, Prusti, Crux-rust, Creusot.</p></div>
+        <div class="chapter"><span class="chapter-num">39</span><h3>Benchmarking & Profiling</h3><p>Criterion, Poop, Tracy-rs, Flamegraph.</p></div>
+        <div class="chapter"><span class="chapter-num">40</span><h3>Containerization & Sandboxing</h3><p>RunC-rs, Youki, Seccomp-sys, Apparmor-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">41</span><h3>Physics Engines</h3><p>Rapier, Salva (Fluids), Physx-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">42</span><h3>Meta-programming</h3><p>Quote, Syn, Proc-macro2, Darling.</p></div>
+        <div class="chapter"><span class="chapter-num">43</span><h3>File Systems (Internal)</h3><p>Zfs-rs, Fuse-mt, Fatfs, Littlefs-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">44</span><h3>Compression Algorithms</h3><p>Flate2, Zstd, Lz4, Tar-rs, Zip-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">45</span><h3>Hardware Interfacing</h3><p>Serialport, I2cdev, Spidev, Rusb (USB).</p></div>
+        <div class="chapter"><span class="chapter-num">46</span><h3>Time & Calendars</h3><p>Chrono, Time, Jiff, Iso8601.</p></div>
+        <div class="chapter"><span class="chapter-num">47</span><h3>Logging & Tracing</h3><p>Tracing, Log, Env_logger, Sentry-rust.</p></div>
+        <div class="chapter"><span class="chapter-num">48</span><h3>Testing Frameworks</h3><p>Proptest, Mockall, Tarpaulin, Nextest.</p></div>
+        <div class="chapter"><span class="chapter-num">49</span><h3>Document Generation</h3><p>Typst, MdBook, Pandoc-ast.</p></div>
+        <div class="chapter"><span class="chapter-num">50</span><h3>Linux Kernel Integration</h3><p>Rust-for-Linux, Bindgen-kernel.</p></div>
+        <div class="chapter"><span class="chapter-num">51</span><h3>Financial Ledgers</h3><p>TigerBeetle-client, Coino-rs, Ledger-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">52</span><h3>AR/VR Spatial Computing</h3><p>OpenXR, Stardust-xr, WebXR-wasm.</p></div>
+        <div class="chapter"><span class="chapter-num">53</span><h3>Message Queues</h3><p>Nats-rs, Lapin (RabbitMQ), Rdkafka.</p></div>
+        <div class="chapter"><span class="chapter-num">54</span><h3>Search Engines</h3><p>Meilisearch, Tantivy, Sonic.</p></div>
+        <div class="chapter"><span class="chapter-num">55</span><h3>Authentication (OAuth/JWT)</h3><p>Jsonwebtoken, Oauth2, Webauthn-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">56</span><h3>Text Processing & NLP</h3><p>Rust-bert, Tokenizers, Natural, Regex.</p></div>
+        <div class="chapter"><span class="chapter-num">57</span><h3>Image Processing</h3><p>Image-rs, Resvg, Vello, Tiny-skia.</p></div>
+        <div class="chapter"><span class="chapter-num">58</span><h3>Math: Big Numbers</h3><p>Num-bigint, Rug, Glass-pumpkin.</p></div>
+        <div class="chapter"><span class="chapter-num">59</span><h3>Math: Linear Algebra</h3><p>Faer, Nalgebra, Ndarray.</p></div>
+        <div class="chapter"><span class="chapter-num">60</span><h3>Emulator Development</h3><p>Gearboy, Pinky, ChipZ.</p></div>
+        <div class="chapter"><span class="chapter-num">61</span><h3>OSINT & Intelligence</h3><p>Spider-rs, Scraper, Osint-kit.</p></div>
+        <div class="chapter"><span class="chapter-num">62</span><h3>Fintech: Risk Management</h3><p>VaR-sim, Monte-carlo-rs, Greek-calc.</p></div>
+        <div class="chapter"><span class="chapter-num">63</span><h3>DevOps Automation</h3><p>Terraform-provider-zig, K8s-openapi.</p></div>
+        <div class="chapter"><span class="chapter-num">64</span><h3>Smart Home & IoT</h3><p>Matter-rs, Home-assistant-api, Zigbee-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">65</span><h3>Network Analysis (Sniffing)</h3><p>Pnet, Etherparse, Pcap-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">66</span><h3>Secure Enclaves</h3><p>Teaclave, Fortanix-sgx, Nitro-enclaves.</p></div>
+        <div class="chapter"><span class="chapter-num">67</span><h3>Data Serialization (Binary)</h3><p>Abomonation, Flatbuffers, Capnproto-rust.</p></div>
+        <div class="chapter"><span class="chapter-num">68</span><h3>Code Analysis (Static)</h3><p>Cargo-geiger, Cargo-bloat, Rust-code-analysis.</p></div>
+        <div class="chapter"><span class="chapter-num">69</span><h3>Symbolic Execution</h3><p>Angr-rs, Miasm-rs, KLEE-integration.</p></div>
+        <div class="chapter"><span class="chapter-num">70</span><h3>Blockchain: Oracle & Bridge</h3><p>Chainlink-rs, Layerzero-sdk, Wormhole-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">71</span><h3>High Performance Caching</h3><p>Moka, Dashmap, Stretch.</p></div>
+        <div class="chapter"><span class="chapter-num">72</span><h3>Distributed Logging</h3><p>Vector, Fluent-bit-rs, Journald-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">73</span><h3>Scientific Plotting</h3><p>Plotters, Plotly-rs, Gr-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">74</span><h3>Language Runtimes</h3><p>Deno (JS), Boa (JS), Gluon, Rhai.</p></div>
+        <div class="chapter"><span class="chapter-num">75</span><h3>Fuzzing Engines</h3><p>AFL++, Libfuzzer-sys, Honggfuzz.</p></div>
+        <div class="chapter"><span class="chapter-num">76</span><h3>Cryptographic Agility</h3><p>Rustls, OpenSSL-rs, BoringSSL-rs.</p></div>
+        <div class="chapter"><span class="chapter-num">77</span><h3>The Unsafe Lab</h3><p>Raw-window-handle, Unsafe-lib, FFI-helpers.</p></div>
+    </div>
+
+    <a class="btn-print" onclick="window.print()">Download / Print PDF</a>
+</div>
+
+</body>
+</html>

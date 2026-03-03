@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>LEET Master Archive 1337 - Systems Engineering</title>
+    <style>
+        :root {
+            --macro-bg: #1a2a6c;
+            --giga-bg: #b21f1f;
+            --micro-color: #fdbb2d;
+            --text: #ffffff;
+        }
+        body { font-family: 'Fira Code', monospace; background: #0f0f0f; color: #ccc; padding: 20px; }
+        .header { text-align: center; border-bottom: 2px solid var(--micro-color); padding-bottom: 20px; margin-bottom: 30px; }
+        
+        .macro-section { margin-bottom: 15px; border: 1px solid #333; }
+        .macro-title { 
+            background: var(--macro-bg); color: white; padding: 15px; 
+            cursor: pointer; font-size: 1.2em; font-weight: bold; display: flex; justify-content: space-between;
+        }
+
+        .giga-container { display: none; padding: 10px; background: #111; }
+        .giga-section { margin: 10px 0; border-left: 3px solid var(--giga-bg); padding-left: 15px; }
+        .giga-title { color: var(--giga-bg); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+
+        .micro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+        .micro-item { 
+            background: #222; padding: 10px; border-radius: 4px; font-size: 0.85em; 
+            border: 1px solid #444; transition: 0.2s;
+        }
+        .micro-item:hover { border-color: var(--micro-color); background: #2a2a2a; }
+        .micro-id { color: var(--micro-color); font-weight: bold; margin-right: 5px; }
+        .tag { font-size: 0.7em; background: #444; padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+
+        .search-bar { width: 100%; padding: 15px; margin-bottom: 20px; background: #222; border: 1px solid var(--micro-color); color: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>1337 MASTER HIERARCHY</h1>
+    <p>Systems, Finance, AI & Low-Level Engineering | 150,000+ Crates Mapped</p>
+</div>
+
+<input type="text" class="search-bar" id="search" placeholder="Caută micro-capitol (ex: HFT, Kernel, DNA)...">
+
+<!-- MACRO 1: SYSTEMS & KERNEL -->
+<div class="macro-section">
+    <div class="macro-title" onclick="toggle('macro1')">
+        1. SYSTEMS & KERNEL [Giga 1.1 - 1.5] <span>+</span>
+    </div>
+    <div class="giga-container" id="macro1">
+        <div class="giga-section">
+            <div class="giga-title">Giga 1.1: OS Internals & Boot</div>
+            <div class="micro-grid">
+                <div class="micro-item"><span class="micro-id">#001</span>UEFI-Handshake-Logic <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#002</span>GDT-Segmentation-x64 <span class="tag">Asm</span></div>
+                <div class="micro-item"><span class="micro-id">#003</span>APIC-Interrupt-Routing <span class="tag">Rust</span></div>
+                <div class="micro-item"><span class="micro-id">#004</span>Paging-Table-Walkers <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#005</span>ACPI-Power-Parsing <span class="tag">Rust</span></div>
+            </div>
+        </div>
+        <div class="giga-section">
+            <div class="giga-title">Giga 1.2: Drivers & DMA</div>
+            <div class="micro-grid">
+                <div class="micro-item"><span class="micro-id">#010</span>PCIe-BAR-Mapping <span class="tag">Rust</span></div>
+                <div class="micro-item"><span class="micro-id">#011</span>NVMe-Queue-Management <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#012</span>USB-XHCI-Polling <span class="tag">Asm</span></div>
+                <div class="micro-item"><span class="micro-id">#013</span>VirtIO-Block-Request <span class="tag">Rust</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MACRO 5: FINANCE & HFT -->
+<div class="macro-section">
+    <div class="macro-title" onclick="toggle('macro5')">
+        5. FINANCE & HIGH-FREQUENCY TRADING [Giga 5.1 - 5.4] <span>+</span>
+    </div>
+    <div class="giga-container" id="macro5">
+        <div class="giga-section">
+            <div class="giga-title">Giga 5.1: Market Data (Feed Handlers)</div>
+            <div class="micro-grid">
+                <div class="micro-item"><span class="micro-id">#101</span>NASDAQ-ITCH-Fast-Parser <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#102</span>FIX-SBE-Decoder <span class="tag">Rust</span></div>
+                <div class="micro-item"><span class="micro-id">#103</span>UDP-Multicast-ZeroCopy <span class="tag">Asm</span></div>
+                <div class="micro-item"><span class="micro-id">#104</span>JSON-Tick-Streaming <span class="tag">Rust</span></div>
+            </div>
+        </div>
+        <div class="giga-section">
+            <div class="giga-title">Giga 5.2: Matching Engines</div>
+            <div class="micro-grid">
+                <div class="micro-item"><span class="micro-id">#120</span>Price-Time-Priority-Queue <span class="tag">Rust</span></div>
+                <div class="micro-item"><span class="micro-id">#121</span>Ring-Buffer-Order-In <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#122</span>Latency-Optimized-CXL <span class="tag">Asm</span></div>
+                <div class="micro-item"><span class="micro-id">#123</span>Atomic-Trade-Settlement <span class="tag">TigerBeetle</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MACRO 4: DATA SCIENCE & AI -->
+<div class="macro-section">
+    <div class="macro-title" onclick="toggle('macro4')">
+        4. DATA SCIENCE & ARTIFICIAL INTELLIGENCE [Giga 4.1 - 4.3] <span>+</span>
+    </div>
+    <div class="giga-container" id="macro4">
+        <div class="giga-section">
+            <div class="giga-title">Giga 4.1: Neural Engine Kernels</div>
+            <div class="micro-grid">
+                <div class="micro-item"><span class="micro-id">#201</span>SIMD-GEMM-F32 <span class="tag">Asm</span></div>
+                <div class="micro-item"><span class="micro-id">#202</span>Quantization-Int8-AVX <span class="tag">Zig</span></div>
+                <div class="micro-item"><span class="micro-id">#203</span>Softmax-Vector-Optimization <span class="tag">Rust</span></div>
+                <div class="micro-item"><span class="micro-id">#204</span>Flash-Attention-V3-Core <span class="tag">Asm</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        let el = document.getElementById(id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Search Logic (Simple Filter)
+    document.getElementById('search').addEventListener('keyup', function(e) {
+        let term = e.target.value.toLowerCase();
+        let items = document.querySelectorAll('.micro-item');
+        items.forEach(item => {
+            if(item.innerText.toLowerCase().includes(term)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

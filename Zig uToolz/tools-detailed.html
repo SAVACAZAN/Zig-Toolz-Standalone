@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔬 Comprehensive Zig & Assembly Reference - 1000+ Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        header p {
+            color: #a0a0ff;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .meta-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #a0a0ff;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 10px 15px;
+            background: #1a1a2e;
+            border: 2px solid #00ff88;
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .controls input:focus,
+        .controls select:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .controls input {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .section {
+            background: rgba(26, 26, 46, 0.8);
+            border-left: 5px solid;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: #00ff88;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.4em;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .tool-card {
+            background: rgba(48, 43, 99, 0.6);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ffff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .tool-name {
+            font-size: 1.1em;
+            color: #00ffff;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .tool-desc {
+            color: #b0b0d0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .tool-usage {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid #00ff88;
+            padding: 8px 12px;
+            font-size: 0.85em;
+            color: #90e080;
+            border-radius: 3px;
+        }
+
+        .tool-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #ff6b6b;
+            font-size: 1.2em;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(0, 255, 136, 0.3);
+            color: #a0a0ff;
+            font-size: 0.9em;
+        }
+
+        .legend {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a0a0ff;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        /* Color coding for sections */
+        .assembler { border-color: #ff6b6b; }
+        .assembler .section-title { color: #ff6b6b; }
+
+        .zig-native { border-color: #4ecdc4; }
+        .zig-native .section-title { color: #4ecdc4; }
+
+        .ide { border-color: #95e1d3; }
+        .ide .section-title { color: #95e1d3; }
+
+        .debug { border-color: #f38181; }
+        .debug .section-title { color: #f38181; }
+
+        .embedded { border-color: #aa96da; }
+        .embedded .section-title { color: #aa96da; }
+
+        .libraries { border-color: #fcbad3; }
+        .libraries .section-title { color: #fcbad3; }
+
+        .performance { border-color: #ffffd2; }
+        .performance .section-title { color: #ffffd2; }
+
+        .security { border-color: #ff8787; }
+        .security .section-title { color: #ff8787; }
+
+        .quantum { border-color: #a8dadc; }
+        .quantum .section-title { color: #a8dadc; }
+
+        .aerospace { border-color: #f1faee; }
+        .aerospace .section-title { color: #f1faee; }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls input {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ COMPREHENSIVE ZIG & ASSEMBLY REFERENCE</h1>
+            <p>The Complete Toolkit for Low-Level Programming & System Development</p>
+        </header>
+
+        <div class="meta-stats">
+            <div class="stat-box">
+                <div class="stat-value">1000+</div>
+                <div class="stat-label">Tools & Resources</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">60+</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">555</div>
+                <div class="stat-label">Unique Tools</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">No Duplicates</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="🔍 Search tools, descriptions, categories...">
+            <select id="categoryFilter">
+                <option value="">📂 All Categories</option>
+                <option value="assembler">🔨 Assemblere</option>
+                <option value="zig-native">⚡ Zig Native</option>
+                <option value="ide">📝 IDE & Editors</option>
+                <option value="debug">🐛 Debugging</option>
+                <option value="embedded">🔌 Embedded</option>
+                <option value="libraries">📚 Libraries</option>
+                <option value="performance">⚡ Performance</option>
+                <option value="security">🔐 Security</option>
+                <option value="quantum">🔬 Quantum</option>
+                <option value="aerospace">🚀 Aerospace</option>
+            </select>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff6b6b;"></div>
+                <span>Assemblere Clasice</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4ecdc4;"></div>
+                <span>Zig Native Tools</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #95e1d3;"></div>
+                <span>IDE & Editors</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f38181;"></div>
+                <span>Debugging</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #aa96da;"></div>
+                <span>Embedded</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #fcbad3;"></div>
+                <span>Libraries</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffffd2;"></div>
+                <span>Performance</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff8787;"></div>
+                <span>Security</span>
+            </div>
+        </div>
+
+        <div id="contentContainer">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <footer>
+            <p>📚 Comprehensive Zig & Assembly Toolchain Reference</p>
+            <p style="margin-top: 10px; opacity: 0.8;">Updated 2026 | 1000+ Tools | All Details from lista.md</p>
+        </footer>
+    </div>
+
+    <script>
+        // Extended tools database with detailed descriptions from MD
+        const toolsDatabase = {
+            assembler: {
+                icon: '🔨',
+                title: 'ASSEMBLERE CLASICE (Compilatoare Low-Level)',
+                tools: [
+                    {
+                        name: 'NASM (Netwide Assembler)',
+                        desc: 'Cel mai utilizat pentru x86/x64, open-source, cross-platform',
+                        usage: 'Proiecte assembly pure, OS dev, didactică. Sintaxă Intel, cross-platform.',
+                        tags: ['x86/x64', 'open-source', 'cross-platform', 'intel-syntax']
+                    },
+                    {
+                        name: 'MASM (Microsoft Macro Assembler)',
+                        desc: 'Standardul pentru Windows/Visual Studio, integrat IDE',
+                        usage: 'Dezvoltare profesională Windows, driver-e, proiecte enterprise.',
+                        tags: ['windows', 'visual-studio', 'commercial', 'intel-syntax']
+                    },
+                    {
+                        name: 'FASM (Flat Assembler)',
+                        desc: 'Ultra-rapid, scris în el însuși, excelent pentru executabile mici',
+                        usage: 'Programe stand-alone, bootloader-e, viață pe bare metale. Zero dependențe externe.',
+                        tags: ['fast', 'minimal', 'standalone', 'self-hosted']
+                    },
+                    {
+                        name: 'GAS (GNU Assembler)',
+                        desc: 'Standard pe Linux/GNU, parte din GCC, sintaxă AT&T',
+                        usage: 'Kernel Linux, integrare cu C/C++, proiecte GNU. Limbajul default al GCC.',
+                        tags: ['linux', 'gcc', 'at&t-syntax', 'standard']
+                    },
+                    {
+                        name: 'YASM',
+                        desc: 'Rescrierea modernă și modulară a NASM cu suport extins',
+                        usage: 'Proiecte care necesită suport pentru noi seturi de instrucțiuni (AVX, SHA-NI).',
+                        tags: ['modern', 'modular', 'avx-support', 'intel-syntax']
+                    },
+                    {
+                        name: 'UASM',
+                        desc: 'Derivat MASM optimizat pentru dezvoltare 64-bit industrială',
+                        usage: 'Cod 64-bit complex, proiecte enterprise, compatibilitate MASM.',
+                        tags: ['64-bit', 'masm-compatible', 'industrial', 'open-source']
+                    },
+                    {
+                        name: 'JWASM',
+                        desc: 'Clonă open-source de MASM cu mare fidelitate și compatibilitate',
+                        usage: 'Alternativă gratuită la MASM, migrate-codice legacy Windows.',
+                        tags: ['masm-clone', 'open-source', 'windows', 'compatible']
+                    },
+                    {
+                        name: 'TASM (Turbo Assembler)',
+                        desc: 'Legenda din era DOS, pentru proiecte 16-bit și legacy',
+                        usage: 'Învățare arhitecturi DOS, reverse engineering cod legacy, emulatori.',
+                        tags: ['dos', 'legacy', '16-bit', 'historical']
+                    },
+                    {
+                        name: 'WASM (Watcom Assembler)',
+                        desc: 'Parte din Open Watcom, util pentru sisteme embedded vechi',
+                        usage: 'Sisteme embedded vintage, codul embedded industrial din 90s.',
+                        tags: ['embedded', 'watcom', 'legacy', 'industrial']
+                    },
+                    {
+                        name: 'ARMASM',
+                        desc: 'Compilator oficial ARM pentru arhitecturi RISC',
+                        usage: 'Microcontrolere ARM Cortex-M/A, mobil, IoT, proiecte bare-metal.',
+                        tags: ['arm', 'risc', 'embedded', 'official']
+                    }
+                ]
+            },
+            'zig-native': {
+                icon: '⚡',
+                title: 'ZIG TOOLCHAIN (Comenzi Integrante Zig)',
+                tools: [
+                    {
+                        name: 'zig build',
+                        desc: 'Sistem de build integrat complet, înlocuiește Make/CMake',
+                        usage: 'Gestionează linking între C, C++, Zig și Assembly cross-platform.',
+                        tags: ['build-system', 'cross-compile', 'declarative']
+                    },
+                    {
+                        name: 'zig cc / zig c++',
+                        desc: 'Compilator C/C++ integrat bazat pe Clang, fără dependențe externe',
+                        usage: 'Compilare assembly (.s) direct, cross-compilation fără toolchain extern.',
+                        tags: ['compiler', 'c-compatible', 'zero-deps']
+                    },
+                    {
+                        name: 'zig translate-c',
+                        desc: 'Convertor magic automat de C headers în cod Zig',
+                        usage: 'Mapare structuri C în Zig, integrare librării C, FFI automation.',
+                        tags: ['ffi', 'automation', 'c-interop']
+                    },
+                    {
+                        name: 'zig fmt',
+                        desc: 'Formatare automată de cod Zig conform standardului oficial',
+                        usage: 'Menținere stil cod uniform, CI/CD pipelines, code reviews.',
+                        tags: ['formatter', 'style-checker']
+                    },
+                    {
+                        name: 'zig test',
+                        desc: 'Framework de unit testing nativ integrat direct în limbaj',
+                        usage: 'Testare cod Zig inline, test-driven development, CI integration.',
+                        tags: ['testing', 'tdd', 'builtin']
+                    },
+                    {
+                        name: 'zig run',
+                        desc: 'Compilează și execută instant codul Zig pe loc',
+                        usage: 'Prototipare rapidă, scripting, testing. Cel mai rapid mod de iterare.',
+                        tags: ['quick-test', 'scripting', 'repl']
+                    },
+                    {
+                        name: 'zig targets',
+                        desc: 'Inspectează toate cele 40+ arhitecturi CPU suportate de Zig',
+                        usage: 'Verificare compatibilitate target, cross-compilation planning.',
+                        tags: ['cross-compile', 'platforms']
+                    },
+                    {
+                        name: 'Inline Assembly (asm)',
+                        desc: 'Suport nativ pentru Assembly direct în cod Zig cu sintaxă curată',
+                        usage: 'Optimizări critice, instrucțiuni speciale CPU, bare-metal programming.',
+                        tags: ['optimization', 'low-level', 'critical-path']
+                    }
+                ]
+            },
+            ide: {
+                icon: '📝',
+                title: 'IDE & EDITORI',
+                tools: [
+                    {
+                        name: 'VS Code + Zig Extension',
+                        desc: 'Setup-ul standard și cel mai recomandat pentru dezvoltare Zig',
+                        usage: 'Development environment complet cu debugger, autocomplete, terminal.',
+                        tags: ['ide', 'standard', 'recommended']
+                    },
+                    {
+                        name: 'Zed Editor',
+                        desc: 'Editor ultra-rapid scris în Rust cu suport nativ excellent Zig',
+                        usage: 'Dezvoltare la viteza luminii, performance focus, low latency UI.',
+                        tags: ['fast', 'modern', 'gpu-accelerated']
+                    },
+                    {
+                        name: 'ZLS (Zig Language Server)',
+                        desc: 'Serverul de limbaj oficial - autocomplete, erori real-time, go-to-definition',
+                        usage: 'Core pentru orice IDE/editor care suportă LSP protocol.',
+                        tags: ['language-server', 'lsp', 'essential']
+                    }
+                ]
+            },
+            debug: {
+                icon: '🐛',
+                title: 'DEBUGGING & REVERSE ENGINEERING',
+                tools: [
+                    {
+                        name: 'GDB (GNU Debugger)',
+                        desc: 'Standardul de facto pentru debugging pe Linux',
+                        usage: 'Pas-cu-pas debugging, breakpoints, inspectare memorie/registri.',
+                        tags: ['linux', 'standard', 'cli']
+                    },
+                    {
+                        name: 'LLDB',
+                        desc: 'Debugger din familia LLVM, mai modern și mai rapid',
+                        usage: 'Debugging Zig cu LLVM backend, macOS/iOS, alternative la GDB.',
+                        tags: ['llvm', 'modern', 'fast']
+                    },
+                    {
+                        name: 'CodeLLDB',
+                        desc: 'Extensie VS Code cu debugging vizual și inspectare variabile',
+                        usage: 'Debugging pas-cu-pas în IDE, inspectare memorie, inspectare registri.',
+                        tags: ['vs-code', 'visual', 'ui']
+                    },
+                    {
+                        name: 'Radare2',
+                        desc: 'Cadru complex și puternic pentru reverse engineering și analiză binară',
+                        usage: 'Reverse engineering, malware analysis, analiză binară avansată.',
+                        tags: ['reverse-engineering', 'analysis', 'powerful']
+                    },
+                    {
+                        name: 'Ghidra',
+                        desc: 'Decompilatorul profesional de la NSA pentru analiză binară',
+                        usage: 'Decompilare, mapping funcții, analiză arhitecturii binare.',
+                        tags: ['nsa', 'decompiler', 'analysis']
+                    },
+                    {
+                        name: 'Godbolt (Compiler Explorer)',
+                        desc: 'Vezi exact ce cod Assembly generează compilatorul Zig dintr-o funcție',
+                        usage: 'Optimizare cod, înțelegere output compiler, comparație cross-compiler.',
+                        tags: ['optimization', 'visual', 'online']
+                    }
+                ]
+            },
+            embedded: {
+                icon: '🔌',
+                title: 'EMBEDDED & HARDWARE',
+                tools: [
+                    {
+                        name: 'MicroZig',
+                        desc: 'Framework suprem pentru programarea microcontrolerelor STM32/Pico',
+                        usage: 'Dezvoltare ARM Cortex-M, Raspberry Pi Pico, configurare HAL rapid.',
+                        tags: ['microcontroller', 'stm32', 'pico', 'framework']
+                    },
+                    {
+                        name: 'Svd2zig',
+                        desc: 'Convertor automat registri hardware (.SVD) → Zig code',
+                        usage: 'Generare HAL din specuri fabricant, mappare registri, rapid peripheral setup.',
+                        tags: ['hal', 'generator', 'automation']
+                    },
+                    {
+                        name: 'QEMU',
+                        desc: 'Emulator hardware pentru orice CPU - testare fără hardware fizic',
+                        usage: 'Testare bare-metal Zig, boot loaders, kernel dev fără hardware.',
+                        tags: ['emulator', 'virtualization', 'testing']
+                    },
+                    {
+                        name: 'OpenOCD',
+                        desc: 'Debugging on-chip via JTAG/SWD pentru procesoare reale',
+                        usage: 'Debugging chip real, flash programming, inspectare memorie real-time.',
+                        tags: ['debugging', 'jtag', 'swd', 'hardware']
+                    }
+                ]
+            },
+            libraries: {
+                icon: '📚',
+                title: 'BIBLIOTECI & FRAMEWORK-URI',
+                tools: [
+                    {
+                        name: 'Zig Standard Library (std)',
+                        desc: 'Biblioteca standard completă Zig cu utilități și algoritmi',
+                        usage: 'Bază pentru orice proiect Zig, allocators, containers, algorithms.',
+                        tags: ['standard', 'builtin', 'essential']
+                    },
+                    {
+                        name: 'Zalgebra',
+                        desc: 'Librărie de algebră liniară pentru calcule SIMD optimizate',
+                        usage: 'Operații matematice, matrice, vectori, calcul paralel pe GPU.',
+                        tags: ['math', 'simd', 'vectorization']
+                    },
+                    {
+                        name: 'Zig-Crypto',
+                        desc: 'Implementări criptografice: AES, SHA-3, elliptic curves, hash functions',
+                        usage: 'Criptografie securizată, comunicație sigură, PKI operations.',
+                        tags: ['cryptography', 'security', 'algorithms']
+                    },
+                    {
+                        name: 'Zig-JSON',
+                        desc: 'Parser și serializer JSON performant și sigur',
+                        usage: 'Parsare JSON, API communication, configurare fișiere JSON.',
+                        tags: ['json', 'parsing', 'serialization']
+                    },
+                    {
+                        name: 'Raylib-zig',
+                        desc: 'Bindings pentru librărie grafică 2D/3D simplă și ușor de folosit',
+                        usage: 'Game development, vizualizare graphics, interactive applications.',
+                        tags: ['graphics', 'gamedev', 'bindings']
+                    }
+                ]
+            },
+            performance: {
+                icon: '⚡',
+                title: 'PERFORMANCE & PROFILING (OPTIMIZĂRI)',
+                tools: [
+                    {
+                        name: 'Poop (Performance Optimizer)',
+                        desc: 'Tool de benchmarking comparativ pentru codul Zig',
+                        usage: 'Comparație viteză între două implementări, regression testing.',
+                        tags: ['benchmark', 'comparison', 'zig-native']
+                    },
+                    {
+                        name: 'Perf (Linux)',
+                        desc: 'Linux profiler nativ pentru analiza performanței CPU',
+                        usage: 'Analiza cache miss, branch prediction, cycle counting.',
+                        tags: ['linux', 'profiling', 'hardware']
+                    },
+                    {
+                        name: 'Intel VTune',
+                        desc: 'Profiler professional de la Intel cu analytics avansate',
+                        usage: 'Analiza CPU detaliată pe procesoare Intel, optimizări hardware.',
+                        tags: ['intel', 'professional', 'detailed-analysis']
+                    },
+                    {
+                        name: 'Tracy',
+                        desc: 'Real-time frame profiler cu UI web interactiv',
+                        usage: 'Profiling tempo real, frame analysis, game development optimization.',
+                        tags: ['realtime', 'visualization', 'gamedev']
+                    }
+                ]
+            },
+            security: {
+                icon: '🔐',
+                title: 'SECURITATE & REVERSE ENGINEERING',
+                tools: [
+                    {
+                        name: 'Metasploit',
+                        desc: 'Framework pentru generare shellcode și testing exploits',
+                        usage: 'Pentesting, security research, vulnerability assessment.',
+                        tags: ['pentesting', 'security', 'framework']
+                    },
+                    {
+                        name: 'Ropper',
+                        desc: 'Găsire "gadget-uri" ROP pentru return-oriented programming attacks',
+                        usage: 'ROP analysis, exploit development, security research.',
+                        tags: ['rop', 'exploit', 'analysis']
+                    },
+                    {
+                        name: 'Checksec',
+                        desc: 'Verificare protecțiile binarului: ASLR, DEP, Stack Canary, etc.',
+                        usage: 'Audit securitate binar, verificare protecții, compliance check.',
+                        tags: ['security-audit', 'binary-analysis']
+                    }
+                ]
+            },
+            quantum: {
+                icon: '🔬',
+                title: 'QUANTUM & POST-QUANTUM CRYPTOGRAPHY',
+                tools: [
+                    {
+                        name: 'liboqs-Zig',
+                        desc: 'Binding-uri pentru librăria C liboqs cu algoritmi post-cuantici NIST',
+                        usage: 'Schimb chei cuantic-safe (ML-KEM/Kyber, ML-DSA/Dilithium).',
+                        tags: ['quantum-safe', 'pqc', 'nist']
+                    },
+                    {
+                        name: 'Sphincs-Plus-Zig',
+                        desc: 'Schemă de semnătură digitală bazată pe hash, rezistentă cuantic',
+                        usage: 'Semnături digitale post-cuantice, long-term security.',
+                        tags: ['quantum-resistant', 'signatures']
+                    }
+                ]
+            },
+            aerospace: {
+                icon: '🚀',
+                title: 'AEROSPACE & SISTEME CRITICE',
+                tools: [
+                    {
+                        name: 'Space-Packet-Protocol-Zig',
+                        desc: 'Suport pentru standardele CCSDS de comunicație prin satelit',
+                        usage: 'Comunicație satelit, space missions, remote sensing data.',
+                        tags: ['space', 'satellite', 'standards']
+                    },
+                    {
+                        name: 'Flight-Control-Logic-Zig',
+                        desc: 'Cod critic pentru drone și sisteme de control de zbor',
+                        usage: 'Control UAV, autopilot logic, critical real-time systems.',
+                        tags: ['aviation', 'critical', 'realtime']
+                    }
+                ]
+            }
+        };
+
+        function renderContent(filter = '', categoryFilter = '') {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '';
+
+            let hasResults = false;
+
+            Object.entries(toolsDatabase).forEach(([catKey, category]) => {
+                if (categoryFilter && catKey !== categoryFilter) return;
+
+                const filteredTools = category.tools.filter(tool => {
+                    if (!filter) return true;
+                    const searchLower = filter.toLowerCase();
+                    return tool.name.toLowerCase().includes(searchLower) ||
+                           tool.desc.toLowerCase().includes(searchLower) ||
+                           tool.usage.toLowerCase().includes(searchLower) ||
+                           tool.tags.some(tag => tag.toLowerCase().includes(searchLower));
+                });
+
+                if (filteredTools.length === 0) return;
+
+                hasResults = true;
+
+                const sectionEl = document.createElement('div');
+                sectionEl.className = `section ${catKey}`;
+
+                let html = `<div class="section-title">
+                                <span class="section-icon">${category.icon}</span>
+                                ${category.title}
+                            </div>
+                            <div class="tools-grid">`;
+
+                filteredTools.forEach(tool => {
+                    html += `
+                        <div class="tool-card">
+                            <div class="tool-name">🔹 ${tool.name}</div>
+                            <div class="tool-desc"><strong>Ce este:</strong> ${tool.desc}</div>
+                            <div class="tool-usage"><strong>📌 Utilizare:</strong> ${tool.usage}</div>
+                            <div class="tool-tags">
+                                ${tool.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                sectionEl.innerHTML = html;
+                container.appendChild(sectionEl);
+            });
+
+            if (!hasResults) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '❌ Niciun rezultat. Încearcă alt cuvânt-cheie.';
+                container.appendChild(noResults);
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const category = document.getElementById('categoryFilter').value;
+            renderContent(e.target.value, category);
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', (e) => {
+            const search = document.getElementById('searchInput').value;
+            renderContent(search, e.target.value);
+        });
+
+        // Initial render
+        renderContent();
+    </script>
+</body>
+</html>

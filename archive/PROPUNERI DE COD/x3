@@ -1,0 +1,31 @@
+Pentru aplicația ta hibridă (Zig + Assembly pentru performanță și TypeScript pentru logică/API), containerizarea este cea mai bună metodă de a asigura că toate dependințele funcționează identic oriunde.
+Iată cum poți structura acest proces folosind Docker sau alternative moderne:
+1. Varianta Docker (Multi-stage Build)
+Deoarece ai componente care trebuie compilate (Zig/Asm) și componente interpretate (TS), folosește un Dockerfile multi-stage. Acesta separă mediul de construcție de cel de rulare pentru a păstra imaginea finală mică.
+Etapa 1 (Build Zig/Asm): Folosește o imagine de bază precum Alpine Linux sau un container dedicat Zig pentru a genera binarul final.
+Etapa 2 (Build TypeScript): Folosește Node.js sau Bun pentru a compila codul TS în JS.
+Etapa 3 (Runtime): Copiază binarul Zig și fișierele JS compilate într-o imagine finală curată (ex: debian-slim pentru compatibilitate maximă cu apelurile API sau scratch pentru dimensiune minimă). 
+Reddit
+Reddit
+ +4
+2. Alternativa: Bun (All-in-one)
+Dacă vrei să eviți Docker-ul clasic pentru partea de TypeScript, poți folosi Bun.
+De ce? Bun are suport nativ pentru TypeScript și poate apela funcții din librării partajate (din codul tău Zig/Asm) mult mai rapid prin FFI (Foreign Function Interface).
+Poți livra aplicația ca un singur binar auto-executabil care include atât logica TS, cât și runtime-ul necesar. 
+GitHub
+GitHub
+3. Alternativa: WebAssembly (WASM)
+O abordare modernă pentru Zig și Assembly este compilarea lor către WebAssembly.
+Avantaj: Codul Zig/Asm rulează într-un mediu complet izolat (sandbox), similar cu Docker, dar mult mai ușor.
+Integrare: Poți rula modulul WASM direct din Node.js/Bun fără a mai avea nevoie de un container de sistem de operare. 
+DEV Community
+DEV Community
+ +2
+Recomandare pentru Gridbot
+Pentru un bot de trading (unde latența contează):
+Compilează codul Zig/Asm cu ReleaseFast pentru performanță maximă.
+Containerizează folosind un Docker Compose dacă ai nevoie și de o bază de date locală (ex: Redis/PostgreSQL).
+Folosește GitHub Actions pentru a automatiza build-ul imaginii Docker la fiecare update de cod. 
+Reddit
+Reddit
+ +3

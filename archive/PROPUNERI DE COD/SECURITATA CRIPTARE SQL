@@ -1,0 +1,33 @@
+Ideea de a cripta API Keys direct în baza de date SQLite este critică, mai ales pe un VPS. Dacă cineva obține acces la fișierul .db, fără criptare, îți poate goli contul LCX în câteva secunde.
+Iată cum să implementezi asta folosind Zig și Assembly pentru securitate maximă:
+1. Nu folosi o parolă "hardcoded"
+Cea mai mare greșeală este să lași cheia de decriptare în codul sursă.
+Soluția Zig: Folosește un Environment Variable sau un fișier protejat (ex: /etc/lcx_secret.key) pe care aplicația Zig îl citește la pornire.
+Advanced (Linux): Poți folosi keyctl (Linux Keyring) pentru a stoca cheia de decriptare direct în memoria kernel-ului, astfel încât să nu existe niciodată pe disc sub formă de fișier.
+2. Criptarea în Baza de Date (AES-256-GCM)
+Când salvezi cheile LCX în SQLite, nu le salva ca text.
+Zig Implementation: Folosește biblioteca standard std.crypto.aead.aes_gcm.Aes256Gcm. Este foarte rapidă și sigură.
+Assembly Boost: Dacă vrei performanță, poți folosi instrucțiunile AES-NI (disponibile pe majoritatea procesoarelor de VPS moderne) prin inline assembly. Aceasta face criptarea/decriptarea aproape instantanee (câteva cicluri CPU).
+3. Arhitectura de Securitate (The "Vault" Pattern)
+Pentru a te feri de vulnerabilități, urmează acest flux:
+Stocare: API_KEY + API_SECRET -> Criptate cu AES-256 -> Salvate ca BLOB în SQLite.
+Runtime: Când Zig trebuie să facă o cerere la LCX, decriptează cheia doar în RAM.
+Zeroing Memory: După ce cererea HTTP a fost trimisă, folosește std.mem.secureZero în Zig pentru a șterge cheia decriptată din RAM, astfel încât un eventual "memory dump" să nu o găsească.
+4. Vulnerabilitatea "Cold Boot" sau "Process Dump"
+Dacă cineva obține acces root la VPS, poate face un dump al memoriei procesului tău Zig.
+Cum te aperi: Poți folosi syscall-ul mlock din Zig pentru a marca zona de memorie unde ții cheile ca "non-swappable" (să nu fie scrise niciodată pe disk-ul VPS-ului în fișierul de swap).
+5. Securitatea la nivel de SQLite
+Folosește un utilitar precum SQLCipher dacă vrei să criptezi întreaga bază de date, nu doar coloana cu chei. Totuși, pentru performanța ta cu Zig, criptarea doar a coloanelor sensibile (API Keys) este mai eficientă.
+Exemplu conceptual de flux în Zig:
+zig
+// Pseudocod pentru salvare securizată
+const encrypted_key = try vault.encrypt(api_key_raw, master_password);
+try sqlite_db.exec("INSERT INTO credentials (service, key_data) VALUES ('lcx', ?)", .{encrypted_key});
+Use code with caution.
+
+Sfat de aur: Pe VPS, asigură-te că procesul tău Zig rulează sub un user dedicat (ex: trading_user), nu ca root. Astfel, chiar dacă există un bug în codul tău, atacatorul nu poate citi alte fișiere de pe sistem.
+Vrei să te ajut cu o funcție de AES-256 în Zig care să folosească instrucțiunile hardware ale procesorului pentru securitate sporită?
+AI responses may include mistakes. Learn more
+
+
+

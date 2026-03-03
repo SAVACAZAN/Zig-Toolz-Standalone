@@ -1,0 +1,34 @@
+Pentru a crea un GridBot Client ultra-performant în Zig/Assembly care să se instaleze „instant” pe orice arhitectură fără Docker, cea mai bună strategie este Cross-Compilation Statică.
+Iată planul tău de atac pentru a acoperi toate cele trei direcții:
+1. Zig ca "Docker Killer" (Binary-ul Static)
+Spre deosebire de Go sau Rust, Zig este un compilator C/C++ complet, ceea ce înseamnă că poate genera un binar care conține absolut tot ce are nevoie.
+Fără Docker: În loc să trimiți un container de 200MB, trimiți un fișier de 2MB.
+Comanda magică:
+bash
+zig build-exe main.zig -target x86_64-linux-musl -O ReleaseSmall
+Use code with caution.
+
+musl înseamnă că binarul nu va depinde nici măcar de glibc (biblioteca de sistem a Linuxului). Va rula pe Ubuntu, Alpine, CentOS sau chiar pe un router fără modificări. Zig Learn: Cross-compilation
+2. QEMU: Testarea GridBot-ului pe ARM/RISC-V
+Dacă vrei ca botul tău să ruleze pe Raspberry Pi (ARM) sau arhitecturi noi (RISC-V), nu ai nevoie de hardware fizic.
+Workflow:
+Compilezi pentru ARM: zig build-exe bot.zig -target aarch64-linux
+Testezi local cu QEMU:
+bash
+qemu-aarch64 ./bot
+Use code with caution.
+
+De ce contează: Te asigură că logica ta de Assembly inline (dacă folosești instrucțiuni specifice de procesor pentru viteză în trading) funcționează corect înainte să o urci pe server. QEMU Documentation
+3. Nix: Instalare "One-Liner" (Alternativa la Docker)
+Dacă vrei ca utilizatorii tăi să instaleze botul ușor fără să știe ce este Zig, folosești Nix.
+Cum funcționează: Creezi un fișier flake.nix în repo-ul tău.
+Rezultatul: Utilizatorul rulează o singură comandă:
+bash
+nix run github:utilizator/gridbot-client
+Use code with caution.
+
+Nix va descărca binarul pre-compilat pentru arhitectura lor și îl va rula într-un mediu izolat, fără a polua sistemul. Este mult mai rapid decât docker pull. Nix Flakes Manual
+Recomandare pentru GridBot:
+Pentru un bot de trading (GridBot), ai nevoie de latență mică. Folosește:
+Zig pentru logica de rețea (folosind zap pentru HTTP/WebSockets).
+Assembly inline pentru calcule matematice critice (calculul grilelor de preț) pentru a folosi instrucțiunile SIMD (AVX/NEON) ale procesorului.
