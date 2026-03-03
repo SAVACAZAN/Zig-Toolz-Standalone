@@ -26,6 +26,64 @@ This is a standalone, reusable toolkit designed to be imported as a Git submodul
 
 ---
 
+## 🏗️ Ecosystem Integration
+
+**Zig-Toolz-Standalone** is the shared tools repository in a 3-repository ecosystem:
+
+```
+┌─────────────────────────────────────────────────────┐
+│           Zig-Toolz-Standalone (THIS REPO)          │
+│                                                     │
+│  Shared Tools, Scripts & Utilities for all Apps    │
+│  - scripts/ (auto-status, ScanMyApp, etc)          │
+│  - Zig uToolz/ (1200+ tools registry)              │
+│  - docs/ (documentation & guides)                  │
+│  - archive/ (reference implementations)            │
+└────────────────┬────────────────┬──────────────────┘
+                 │                │
+        Used by ↓                 ↓ Used by
+    ┌──────────────────┐   ┌──────────────────┐
+    │ Zig-toolz-       │   │ Zig-toolz-       │
+    │ Assembly         │   │ Assembly-HTMX    │
+    │ (ORIGINAL)       │   │ (Pure variant)   │
+    ├──────────────────┤   ├──────────────────┤
+    │ ✅ React + Zig   │   │ ✅ HTMX + Zig    │
+    │ ✅ Frontend      │   │ ❌ No Frontend   │
+    │ 📊 140+ files    │   │ 📊 50 files      │
+    └──────────────────┘   └──────────────────┘
+```
+
+### 🔗 Related Repositories
+
+| Repository | Purpose | Size | Type |
+|---|---|---|---|
+| **Zig-toolz-Assembly** | Original with React UI | 140+ files | Private |
+| **Zig-toolz-Assembly-HTMX-Pure** | Lightweight HTMX variant | 50 files | Private |
+| **Zig-Toolz-Standalone** | **This repo** - Shared tools | 130+ files | Public |
+
+### 📦 How Applications Use This
+
+Both application variants integrate this repository by:
+
+1. **Including the directory:** `Toolz/` in their project
+2. **Running scripts:** `bash Toolz/scripts/auto-status.sh`
+3. **Accessing tools:** `grep "tool-name" Toolz/Zig\ uToolz/lista.md`
+4. **Referencing docs:** Links from both apps point here
+
+### 🚀 Future Variants
+
+New application variants can reuse this toolkit:
+
+```bash
+git clone --recurse-submodules https://github.com/SAVACAZAN/Zig-toolz-Assembly.git MyNewApp
+
+cd MyNewApp
+# Toolz is already included! Access all scripts and tools immediately
+bash Toolz/scripts/auto-status.sh
+```
+
+---
+
 ## 🚀 Usage
 
 ### As a Git Submodule
